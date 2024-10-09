@@ -361,7 +361,7 @@ testMissingArgument2() {
 
 testGroupedVariables() {
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt -H www.google.com -vvv
+    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt --resolve 127.0.0.1 -H www.google.com -vvv
     # >/dev/null 2>&1
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_OK}" "${EXIT_CODE}"
@@ -369,35 +369,35 @@ testGroupedVariables() {
 
 testGroupedVariablesError() {
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt -H www.google.com -vvxv >/dev/null 2>&1
+    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt --resolve 127.0.0.1 -H www.google.com -vvxv >/dev/null 2>&1
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_UNKNOWN}" "${EXIT_CODE}"
 }
 
 testTimeOut() {
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt -H gmail.com --protocol imap --port 993 --timeout 1 --ignore-exp
+    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt --resolve 127.0.0.1 -H gmail.com --protocol imap --port 993 --timeout 1 --ignore-exp
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_CRITICAL}" "${EXIT_CODE}"
 }
 
 testRequiredProgramFile() {
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt -H www.google.com --file-bin /doesnotexist --ignore-exp
+    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt --resolve 127.0.0.1 -H www.google.com --file-bin /doesnotexist --ignore-exp
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_UNKNOWN}" "${EXIT_CODE}"
 }
 
 testRequiredProgramPermissions() {
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt -H www.google.com --file-bin /etc/hosts --ignore-exp
+    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt --resolve 127.0.0.1 -H www.google.com --file-bin /etc/hosts --ignore-exp
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_UNKNOWN}" "${EXIT_CODE}"
 }
 
 testNotLongerValidThan() {
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt -H www.github.com --not-valid-longer-than 2
+    ${SCRIPT} ${TEST_DEBUG} --rootcert-file cabundle.crt --resolve 127.0.0.1 -H www.github.com --not-valid-longer-than 2
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_CRITICAL}" "${EXIT_CODE}"
 }
@@ -447,7 +447,7 @@ testCertificateWithEmptySANFail() {
 testFloatingPointThresholds() {
 
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} -H google.com --warning 2.5 --critical 1.5
+    ${SCRIPT} ${TEST_DEBUG} --resolve 127.0.0.1 -H google.com --warning 2.5 --critical 1.5
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_OK}" "${EXIT_CODE}"
 
@@ -456,7 +456,7 @@ testFloatingPointThresholds() {
 testFloatingPointThresholdsExpired() {
 
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} -H expired.badssl.com --warning 2.5 --critical 1.5
+    ${SCRIPT} ${TEST_DEBUG} --resolve 127.0.0.1 -H expired.badssl.test --warning 2.5 --critical 1.5
     EXIT_CODE=$?
     assertEquals "wrong exit code" "${NAGIOS_CRITICAL}" "${EXIT_CODE}"
 
@@ -465,7 +465,7 @@ testFloatingPointThresholdsExpired() {
 testFloatingPointThresholdsWrongUsage() {
 
     # shellcheck disable=SC2086
-    ${SCRIPT} ${TEST_DEBUG} -H github.com --warning 1.5 --critical 2.5
+    ${SCRIPT} ${TEST_DEBUG} --resolve 127.0.0.1 -H github.com --warning 1.5 --critical 2.5
     EXIT_CODE=$?
     assertEquals "expecting error message about --warning is less or equal --critical, but got wrong exit code, " "${NAGIOS_UNKNOWN}" "${EXIT_CODE}"
 
